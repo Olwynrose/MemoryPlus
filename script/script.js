@@ -196,11 +196,19 @@ function jouer() {
 
   $("img.carte").attr("src", adresseMedia(theme, 0, 1));
 
+  //remise à 0
+  $(".carte").removeClass().addClass("carte");
   attribCouple(imgPerTheme);
   $("img.carte").click(retourneCarte);
   $(".divCarte").addClass("hover");
+  $("#tours").text("0");
 
   divCarte = $(".divCarte");
+
+  $("#bRetour").css("display", "none");
+  $("#bRejouer").css("display", "none");
+
+
 }
 
 
@@ -379,4 +387,17 @@ function victoire() {
   setTimeout(function(){
     $("#voile").css({"background-color" : "rgba(255,255,255,0.9)"});
   }, 800);
+
+    //positionnement des boutons
+    $("#bRetour").css("top", $("#voile").position().top + $("#voile").outerHeight() - 40 + "px");
+    $("#bRetour").css("left", $("#voile").position().left + $("#voile").outerWidth()/2 - $("#bRetour").width()/2 + "px");
+    setTimeout(function(){
+        $("#bRetour").css("display", "unset");
+    }, 1200);
+
+    $("#bRejouer").css("top", $("#voile").position().top + $("#voile").outerHeight() - 70 + "px");
+    $("#bRejouer").css("left", $("#voile").position().left + $("#voile").outerWidth()/2 - $("#bRetour").width()/2 + "px");
+    setTimeout(function(){
+        $("#bRejouer").css("display", "unset");
+    }, 1200);
 }

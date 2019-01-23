@@ -191,3 +191,13 @@ img.carte {
   z-index: 2;
   transition: all 0.25s ease-in;
 }
+
+#bRejouer, #bRetour {
+  display: none;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  width: 60px;
+  height: 20px;
+  z-index: 4;
+}
