@@ -110,6 +110,7 @@ nav img:hover {
 
 
 #tours, #chrono {
+  position:absolute;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -121,6 +122,7 @@ nav img:hover {
   font-size: 20px;
   font-family: "Impact";
   box-shadow: 0 0px 10px gray;
+  transform : translate(0, 0);
   transition: transform 1s;
 }
 

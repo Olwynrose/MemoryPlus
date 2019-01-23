@@ -14,7 +14,8 @@ var bufCarte;
 var bufCarteBis;
 var nbCartesTrouvees = 0;
 var timeOutRetourne;
-
+var nbTours;
+var tX;
 
 /*
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -61,13 +62,6 @@ function creerPlateau() {
   $("#plateau").html(code);
   //définition de la taille du plateau
   $("#plateau").css("width", (colonne)*70+(2*colonne)*5 + "px");
-  //définition de la position du chrono et du nombre de tours
-  var margin = ($(document).width() - $("#plateau").outerWidth() - 2 * $("#chrono").outerWidth())/4;
-  $("#chrono").css("margin-left", margin);
-  $("#tours").css("margin-right", margin);
-  $("#score").css("width", $("milieu").width());
-  $("#score").css("opacity", "0");
-  $("#score").css("z-index", "-1");
 
   $("#voile").css("width", $("#plateau").outerWidth() + "px");
   $("#voile").css("height", $("#plateau").outerHeight() + "px");
@@ -179,9 +173,9 @@ function jouer() {
   setTimeout(function(){
     $("#voile").css("opacity", "0");
     $("#voile").css("z-index", "-1");
+    $("#score").css("z-index", "1");
   }, 250);
   $("#score").css("opacity", "1");
-  $("#score").css("z-index", "1");
   $("#plateau").css("z-index", "2");
 
   $("#nbLignes").unbind("change");
@@ -201,9 +195,21 @@ function jouer() {
   attribCouple(imgPerTheme);
   $("img.carte").click(retourneCarte);
   $(".divCarte").addClass("hover");
-  $("#tours").text("0");
+  $("#tours").text("0  tentative");
+  nbTours = 0;
 
   divCarte = $(".divCarte");
+
+  //définition de la position du chrono et du nombre de tours
+
+  $("#chrono").css("left", ($(document).width() - $("#plateau").outerWidth() - 2 * $("#chrono").outerWidth())/4);
+  $("#chrono").css("top", $("#plateau").position().top + $("#plateau").outerHeight()/2);
+  $("#tours").css("right", ($(document).width() - $("#plateau").outerWidth() - 2 * $("#chrono").outerWidth())/4);
+  $("#tours").css("top", $("#plateau").position().top + $("#plateau").outerHeight()/2);
+  $("#score").css("width", $("#milieu").width());
+
+  $("#chrono").css({"transform" : "translate(0,0)"});
+  $("#tours").css({"transform" : "translate(0,0)"});
 
   $("#bRetour").css("display", "none");
   $("#bRejouer").css("display", "none");
@@ -239,7 +245,13 @@ function retourneCarte() {
     // si une deuxième carte est retournée et correspond
     $("img.carte." + couple).addClass("found");
     retourne = 0;
-    $("#tours").text(parseInt($("#tours").text())+1);
+    nbTours = parseInt($("#tours").text())+1;
+    if (nbTours > 1) {
+      $("#tours").text(nbTours + "  tentatives");
+    }
+    else {
+      $("#tours").text(nbTours + "  tentative");
+    }
 
     // réautorise les cartes qui n'ont pas été retournées, à être retournées
     setTimeout(function(){
@@ -264,7 +276,14 @@ function retourneCarte() {
         bufCarte.css('transform','rotateY(180deg)');
       }, 200);
     }, 1400);
-    $("#tours").text(parseInt($("#tours").text())+1);
+    nbTours = parseInt($("#tours").text())+1;
+    if (nbTours > 1) {
+      $("#tours").text(nbTours + "  tentatives");
+    }
+    else {
+      $("#tours").text(nbTours + "  tentative");
+    }
+
     retourne = 0;
     setTimeout(function(){
       $("img.carte").not($(".found")).click(retourneCarte);
@@ -403,4 +422,14 @@ function victoire() {
     setTimeout(function(){
         $("#bRejouer").css("display", "unset");
     }, 1200);
+
+    //déplacement
+    tX = $(document).width()/2 - $("#plateau").outerWidth()/2 + 1.35*$("#chrono").width()/2 - $("#chrono").position().left;
+    console.log("document width / 2 : " + $(document).width()/2);
+    console.log("chrono width / 2 : - " + $("#chrono").width()/2);
+    console.log("chrono position left : - " + $("#chrono").position().left);
+    console.log("transition : " + ($(document).width()/2 - $("#plateau").outerWidth()/2  - $("#chrono").position().left));
+
+    $("#chrono").css({"transform" : "translate( " + tX + "px , -10px)"});
+    $("#tours").css({"transform" : "translate( -" + tX + "px , 40px)"});
 }
