@@ -15,7 +15,8 @@ var bufCarteBis;
 var nbCartesTrouvees = 0;
 var timeOutRetourne;
 var nbTours;
-var tX;
+var tX; //translation sur X du chrono et du nombre de tours
+var bgImg; //adresse de l'image du fond d'écran
 
 /*
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -58,6 +59,21 @@ function creerPlateau() {
     code = code + "</div>";
   }
 
+  if(theme >= 1 && theme <= 5) {
+    bgImg = "url(https://i.pinimg.com/originals/8c/97/7d/8c977d06abc3eee45c0e696c3e325dc1.jpg)";
+  }
+  else if (theme == 6) {
+    bgImg = "url(https://gameranx.com/wp-content/uploads/2016/02/Ratchet-Clank-4K-Wallpaper-3.jpg)";
+  }
+  else if (theme == 7) {
+    bgImg = "url(https://cdn.hipwallpaper.com/i/90/16/7pGSPe.jpg)";
+  }
+  else {
+    bgImg = "url(https://wallpapercave.com/wp/jb9W9vS.jpg)";
+  }
+
+  $("#bg").css("background-image", bgImg);
+
   $("#plateau").html(code);
   //définition de la taille du plateau
   $("#plateau").css("width", (colonne)*70+(2*colonne)*5 + "px");
@@ -68,8 +84,6 @@ function creerPlateau() {
   $("#voile").css("left", $("#plateau").position().left + "px");
 
   $("#bJouer").css("display", "unset");
-  $("#bJouer").css("top", $("#plateau").offset().top + $("#plateau").outerHeight() - 60 + "px");
-  $("#bJouer").css("left", $("#plateau").position().left + $("#plateau").outerWidth()/2 - 53 + "px");
   $("#bAbandonner").css("display", "none");
   $("#bAbandonner").css("top", $("#plateau").offset().top + $("#plateau").outerHeight() + 30 + "px");
   $("#bAbandonner").css("left", $("#plateau").position().left + $("#plateau").outerWidth()/2 - 53 + "px");
@@ -232,6 +246,8 @@ function jouer() {
   $("#bRetour").css("display", "none");
   $("#bRejouer").css("display", "none");
 
+  $("#options").css("display", "none");
+  $("#plateau").css("opacity", "1");
 
 }
 
@@ -380,10 +396,14 @@ function abandonner() {
   $("#bRetour").css("display", "none");
   $("#bRejouer").css("display", "none");
 
+  setTimeout(function() {
+    $("#options").css("display", "flex");
+  }, 300)
+  $("#plateau").css("opacity", "0");
 
   $("#score").css("opacity", "0");
   $("#voile").css("opacity", "1");
-  $("#voile").css({"background-color" : "rgba(255,255,255,0.8)"});
+  $("#voile").css({"background-color" : "rgba(255,255,255,0.7)"});
   $("#voile").css("z-index", "2");
   $("#plateau").css("z-index", "1");
   $("h2").text("");
@@ -434,7 +454,7 @@ function victoire() {
   $("#voile").css("top", $("#plateau").position().top + 20 + "px");
   $("#voile").css("left", $("#plateau").position().left + "px");
   setTimeout(function(){
-    $("#voile").css({"background-color" : "rgba(255,255,255,0.9)"});
+    $("#voile").css({"background-color" : "rgba(255,255,255,1"});
   }, 800);
 
     //positionnement des boutons
