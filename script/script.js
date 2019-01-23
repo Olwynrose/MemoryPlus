@@ -332,6 +332,9 @@ function abandonner() {
   $("#m, #s, #cs").text("00");
   retourne = 0;
 
+  $("#bRetour").css("display", "none");
+  $("#bRejouer").css("display", "none");
+
   $("#score").css("opacity", "0");
   $("#voile").css("opacity", "1");
   $("#voile").css("z-index", "2");
