@@ -15,6 +15,7 @@ var bufCarteBis;
 var nbCartesTrouvees = 0;
 var timeOutRetourne;
 
+
 /*
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                         UTILISATION
@@ -58,9 +59,22 @@ function creerPlateau() {
   }
 
   $("#plateau").html(code);
-
+  //définition de la taille du plateau
   $("#plateau").css("width", (colonne)*70+(2*colonne)*5 + "px");
+  //définition de la position du chrono et du nombre de tours
+  var margin = ($(document).width() - $("#plateau").outerWidth() - 2 * $("#chrono").outerWidth())/4;
+  $("#chrono").css("margin-left", margin);
+  $("#tours").css("margin-right", margin);
+  $("#score").css("width", $("milieu").width());
+  $("#score").css("opacity", "0");
+  $("#score").css("z-index", "-1");
 
+  $("#voile").css("width", $("#plateau").outerWidth() + "px");
+  $("#voile").css("height", $("#plateau").outerHeight() + "px");
+  $("#voile").css("top", $("#plateau").position().top + 20 + "px");
+  $("#voile").css("left", $("#plateau").position().left + "px");
+
+  $()
 }
 
 /*
@@ -75,7 +89,7 @@ function creerVectCouples(imgPerTheme, theme, nbCartes) {
   {
     while(vectCouples.includes(pretendant))
     {
-      pretendant = Math.floor(Math.random()*imgPerTheme[theme])+1;
+      pretendant = parseInt(Math.random()*imgPerTheme[theme])+1;
     }
     vectCouples.push(pretendant, pretendant);
   }
@@ -110,11 +124,10 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 /* CALCUL DU COUPLE */
 function trouveCouple(nbCartes, couples) {
-  var alea = Math.floor(Math.random()*nbCartes);
-  while (couples[alea] == 0)
-  {
+  var alea;
+  do {
     alea = Math.floor(Math.random()*nbCartes);
-  }
+  }while (couples[alea] == 0);
   var couple = couples[alea];
   couples[alea] = 0;
   return couple;
@@ -162,6 +175,15 @@ function jouer() {
   $("#bJouer").attr("disabled", "disabled");
   $("#bAbandonner").removeAttr("disabled");
 
+  $("#voile").css({"background-color" : "rgba(255,255,255,0)"})
+  setTimeout(function(){
+    $("#voile").css("opacity", "0");
+    $("#voile").css("z-index", "-1");
+  }, 250);
+  $("#score").css("opacity", "1");
+  $("#score").css("z-index", "1");
+  $("#plateau").css("z-index", "2");
+
   $("#nbLignes").unbind("change");
   $("#nbLignes").attr("disabled", "disabled");
   $("#nbColonnes").unbind("change");
@@ -176,7 +198,6 @@ function jouer() {
 
   attribCouple(imgPerTheme);
   $("img.carte").click(retourneCarte);
-  $("plateau").css( "zIndex", 1);
   $(".divCarte").addClass("hover");
 
   divCarte = $(".divCarte");
@@ -263,7 +284,9 @@ function retourneCarte() {
   }
 
   if ($("img.carte.found").length == nbCartes) {
-    victoire();
+    setTimeout(function(){
+      victoire();
+    }, 500);
   }
 
 }
@@ -300,6 +323,13 @@ function abandonner() {
   clearInterval(compteur);
   $("#m, #s, #cs").text("00");
   retourne = 0;
+
+  $("#score").css("opacity", "0");
+  $("#voile").css("opacity", "1");
+  $("#voile").css("z-index", "2");
+  $("#plateau").css("z-index", "1");
+  $("#voile").css({"background-color" : "rgba(255,255,255,0.8)"});
+  $("h2").text("");
 }
 
 function chrono() {
@@ -336,14 +366,17 @@ function chrono() {
 
 function victoire() {
   clearInterval(compteur);
-  var wPlateau = document.getElementById("plateau").clientWidth;
-  var hPlateau = document.getElementById("plateau").clientHeight;
 
-  var wChrono = document.getElementById("chrono").clientWidth;
-  var wTours = document.getElementById("tours").clientWidth;
-
-  $("#plateau").css( "zIndex", 10);
-
-
-  var code = $("#plateau").html();
+  $("#voile").css("opacity", "1");
+  $("#voile").css("z-index", "2");
+  $("#plateau").css("z-index", "1");
+  $("#score").css("z-index", "3");
+  //définition des dimensions du voile
+  $("#voile").css("width", $("#plateau").outerWidth() + "px");
+  $("#voile").css("height", $("#plateau").outerHeight() + "px");
+  $("#voile").css("top", $("#plateau").position().top + 20 + "px");
+  $("#voile").css("left", $("#plateau").position().left + "px");
+  setTimeout(function(){
+    $("#voile").css({"background-color" : "rgba(255,255,255,0.9)"});
+  }, 800);
 }
