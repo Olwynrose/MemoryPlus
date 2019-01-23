@@ -160,16 +160,6 @@ nav img:hover {
 }
 
 
-#boutons {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-
-#boutons button {
-  margin: 0px 30px;
-}
-
 img.carte {
   margin: 5px;
   -moz-user-select: none; /* Firefox */
@@ -202,4 +192,26 @@ img.carte {
   width: 60px;
   height: 20px;
   z-index: 4;
+}
+
+#bJouer {
+  position: absolute;
+  opacity: 1;
+  padding: 0;
+  margin: 0;
+  width: 100px;
+  height: 40px;
+  z-index: 4;
+  transition: 1s;
+}
+
+#bAbandonner {
+  position: absolute;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  width: 100px;
+  height: 20px;
+  z-index: 4;
+  transition: 1s;
 }

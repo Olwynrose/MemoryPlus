@@ -24,7 +24,6 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 */
 
 creerPlateau();
-$("#bAbandonner").attr("disabled", "disabled");
 
 /*
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -68,7 +67,12 @@ function creerPlateau() {
   $("#voile").css("top", $("#plateau").position().top + 20 + "px");
   $("#voile").css("left", $("#plateau").position().left + "px");
 
-  $()
+  $("#bJouer").css("display", "unset");
+  $("#bJouer").css("top", $("#plateau").offset().top + $("#plateau").outerHeight() - 60 + "px");
+  $("#bJouer").css("left", $("#plateau").position().left + $("#plateau").outerWidth()/2 - 53 + "px");
+  $("#bAbandonner").css("display", "none");
+  $("#bAbandonner").css("top", $("#plateau").offset().top + $("#plateau").outerHeight() + 30 + "px");
+  $("#bAbandonner").css("left", $("#plateau").position().left + $("#plateau").outerWidth()/2 - 53 + "px");
 }
 
 /*
@@ -166,8 +170,22 @@ function jouer() {
   retourne = 0;
 
   $("#bJouer").unbind("click");
-  $("#bJouer").attr("disabled", "disabled");
-  $("#bAbandonner").removeAttr("disabled");
+  $("#bJouer").css("opacity", "0");
+  setTimeout(function() {
+    $("#bJouer").css("display", "none");
+  }, 1000);
+
+  $("#bJouer").attr("disabled", "true");
+  setTimeout(function() {
+    $("#bJouer").removeAttr("disabled");
+  }, 1000);
+
+  $("#bAbandonner").attr("disabled", "true");
+  setTimeout(function() {
+    $("#bAbandonner").removeAttr("disabled");
+  }, 1000);
+  $("#bAbandonner").css("display", "unset");
+  $("#bAbandonner").css("opacity", "1");
 
   $("#voile").css({"background-color" : "rgba(255,255,255,0)"})
   setTimeout(function(){
@@ -324,11 +342,19 @@ function abandonner() {
   clearTimeout(timeOutRetourne);
   $(".divCarte").removeClass("hover");
   //réactive le bouton jouer
-  $("#bJouer").removeAttr("disabled");
+  $("#bJouer").attr("disabled", "true");
+  $("#bJouer").css("display", "unset");
+  $("#bJouer").css("opacity", "1");
+  setTimeout(function() {
+    $("#bJouer").removeAttr("disabled");
+  }, 1000);
   $("#bJouer").unbind("click").click(jouer);
   //désactive le bouton abandonner
   $("#bAbandonner").unbind("click");
-  $("#bAbandonner").attr("disabled", "disabled");
+  $("#bAbandonner").css("opacity", "0");
+  setTimeout(function() {
+    $("#bAbandonner").css("display", "none");
+  }, 1000);
   $("img.carte").removeClass().addClass("carte");
 
   //redonne la possibilité de choisir la taille du jeu
@@ -354,11 +380,12 @@ function abandonner() {
   $("#bRetour").css("display", "none");
   $("#bRejouer").css("display", "none");
 
+
   $("#score").css("opacity", "0");
   $("#voile").css("opacity", "1");
+  $("#voile").css({"background-color" : "rgba(255,255,255,0.8)"});
   $("#voile").css("z-index", "2");
   $("#plateau").css("z-index", "1");
-  $("#voile").css({"background-color" : "rgba(255,255,255,0.8)"});
   $("h2").text("");
 }
 
@@ -423,8 +450,13 @@ function victoire() {
         $("#bRejouer").css("display", "unset");
     }, 1200);
 
+    $("#bAbandonner").css("opacity", "0");
+    setTimeout(function() {
+      $("#bAbandonner").css("display", "none");
+    }, 1000);
+
     //déplacement
-    tX = $(document).width()/2 - $("#plateau").outerWidth()/2 + 1.35*$("#chrono").width()/2 - $("#chrono").position().left;
+    tX = $(document).width()/2 - $("#plateau").outerWidth()/2 + 1.35*$("#chrono").width()/2 - $("#chrono").offset().left;
     console.log("document width / 2 : " + $(document).width()/2);
     console.log("chrono width / 2 : - " + $("#chrono").width()/2);
     console.log("chrono position left : - " + $("#chrono").position().left);
