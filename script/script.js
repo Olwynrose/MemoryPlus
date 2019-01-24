@@ -17,6 +17,7 @@ var timeOutRetourne;
 var nbTours;
 var tX; //translation sur X du chrono et du nombre de tours
 var bgImg; //adresse de l'image du fond d'écran
+usedCouples = new Array();
 
 /*
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -104,6 +105,7 @@ function creerVectCouples(imgPerTheme, theme, nbCartes) {
       pretendant = parseInt(Math.random()*imgPerTheme[theme])+1;
     }
     vectCouples.push(pretendant, pretendant);
+    usedCouples.push(pretendant, pretendant);
   }
   return vectCouples;
 }
@@ -227,6 +229,7 @@ function jouer() {
   $(".carte").removeClass().addClass("carte");
   attribCouple(imgPerTheme);
   $("img.carte").click(retourneCarte);
+  $(".carte").removeClass("vue");
   $(".divCarte").addClass("hover");
   $("#tours").text("0 tour");
   nbTours = 0;
@@ -277,13 +280,16 @@ function retourneCarte() {
     carte.css('transform','rotateY(180deg)');
   }, 400);
 
-
   carte.addClass("retournee");
+  if (!(carte.hasClass("vue"))) {
+    carte.addClass("vue");
+  }
 
   if (retourne == couple)
   {
     // si une deuxième carte est retournée et correspond
     $("img.carte." + couple).addClass("found");
+    $("img.carte." + couple).removeClass("vue");
     retourne = 0;
     nbTours = parseInt($("#tours").text())+1;
     if (nbTours > 1) {
@@ -324,17 +330,24 @@ function retourneCarte() {
       $("#tours").text(nbTours + "  tour");
     }
 
-    retourne = 0;
-    setTimeout(function(){
-      $("img.carte").not($(".found")).click(retourneCarte);
-      $("img.carte").removeClass("retournee");
-      for (var i = 0 ; i < divCarte.length ; i ++) {
-        if (divCarte[i].getElementsByClassName("retournee").length == 0  && divCarte[i].getElementsByClassName("found").length == 0) {
-          divCarte[i].className += " hover";
-        }
-      }
-    }, 1700);
+    //mode vs bot
+    if ($("#mode").val() > 1) {
 
+      setTimeout(function() {
+        bot();
+        retourne = 0;
+        $("img.carte").removeClass("retournee");
+      }, 2500); //attente des animations du joueur
+    }
+    //mode 1 joueur
+    else {
+      retourne = 0;
+      setTimeout(function(){
+        $("img.carte").not($(".found")).click(retourneCarte);
+        $("div.divCarte").not($(".found")).addClass("hover");
+        $("img.carte").removeClass("retournee");
+      }, 1700)
+    }
   }
   else if (retourne == 0) {
     // si une première carte est retournée
@@ -350,7 +363,7 @@ function retourneCarte() {
 
   }
 
-  if ($("img.carte.found").length == nbCartes) {
+  if ($("img.carte.found").length == $("#nbColonnes").val() * $("#nbLignes").val()) {
     setTimeout(function(){
       victoire();
     }, 500);
@@ -412,7 +425,9 @@ function abandonner() {
   $("#voile").css({"background-color" : "rgba(255,255,255,0.7)"});
   $("#voile").css("z-index", "2");
   $("#plateau").css("z-index", "1");
-  $("h2").text("");
+  $("h2").css("display", "none");
+  $("#annonceScores").css("display", "none");
+  $("#annoncePc").css("display", "none");
 }
 
 function chrono() {
@@ -449,6 +464,7 @@ function chrono() {
 
 function victoire() {
   clearInterval(compteur);
+  clearTimeout();
 
   $("#voile").css("opacity", "1");
   $("#voile").css("z-index", "2");
@@ -509,6 +525,288 @@ function victoire() {
       $("#annoncePc").css("display", "unset");
     }, 650);
     $("#annoncePc").css("top", ($("#tours").position().top) + 50 + "px");
+}
 
 
+function bot() {
+  var carteBot1;
+  var carteBot2;
+  var carteObj1;
+  var carteObj2;
+
+
+    //désactivation des cartes
+    $("img.carte").unbind("click");
+    $("div.divCarte").removeClass("hover");
+
+    clearTimeout(timeoutClick);
+
+
+    //détermination des cartes à retourner en fonction du niveau de difficulté
+    //DIFFICULTE FACILE
+    if ($("#mode").val() == 3) {
+      carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+      carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+
+      while ($("."+carteBot1).hasClass("found")) {
+        carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+      }
+      while ($("."+carteBot2).hasClass("found")) {
+        carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+      }
+
+      //selection des objets cartes à retourner
+      if (carteBot1 == carteBot2) {
+        var carteObj = $("img.carte."+ carteBot1);
+        carteObj1 = carteObj[0];
+        carteObj2 = carteObj[1];
+      }
+      else {
+        carteObj1 = ($("img.carte."+ carteBot1)[Math.floor(Math.random()*2)]);
+        carteObj2 = ($("img.carte."+ carteBot2)[Math.floor(Math.random()*2)]);
+      }
+    }
+    //DIFFICULTE MOYENNE
+    else if ($("#mode").val() == 4) {
+      var alea = Math.random();
+      var trouve = 0;
+
+      if (alea < 0.4) {
+        //recherche de couples dans les cartes deja vues
+        for (var i = 0 ; i < $(".vue").length ; i++) {
+          for (var j = 0 ; j < $(".vue").length ; j++) {
+            if ($(".vue")[i].classList[1] == $(".vue")[j].classList[1] && i != j)
+            {
+              console.log("paire trouvée");
+              carteBot1 = $(".vue")[i].classList[1];
+              carteObj1 = $(".vue")[i];
+              carteBot2 = $(".vue")[j].classList[1];
+              carteObj2 = $(".vue")[j];
+              trouve = 1;
+            }
+          }
+        }
+        //aucun couple trouvé
+        if (trouve == 0) {
+          //choix d'une première carte aléatoire
+          console.log("1er aleatoire");
+          carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+          while ($("."+carteBot1).hasClass("found")) {
+            carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+          }
+          carteObj1 = ($("img.carte."+ carteBot1)[Math.floor(Math.random()*2)]);
+          //recherche du couple dans les cartes deja vues
+          for (var i = 0 ; i < $(".vue").length ; i++) {
+            if ($(".vue")[i].classList[1] == carteObj1.classList[1])
+            {
+              carteObj2 = $(".vue")[i];
+            }
+            //si aucun couple n'a été trouvé, choix d'une deuxième carte aléatoire
+            else {
+              console.log("2eme aleatoire");
+              carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+              while ($("."+carteBot2).hasClass("found")) {
+                carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+              }
+              if (carteBot1 == carteBot2) {
+                var carteObj = $("img.carte."+ carteBot1);
+                carteObj1 = carteObj[0];
+                carteObj2 = carteObj[1];
+              }
+              else {
+                carteObj2 = ($("img.carte."+ carteBot2)[Math.floor(Math.random()*2)]);
+              }
+            }
+          }
+        }
+      }
+      else {
+        console.log("aleatoire");
+        carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+        carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+
+        while ($("."+carteBot1).hasClass("found")) {
+          carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+        }
+        while ($("."+carteBot2).hasClass("found")) {
+          carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+        }
+
+        //selection des objets cartes à retourner
+        if (carteBot1 == carteBot2) {
+          var carteObj = $("img.carte."+ carteBot1);
+          carteObj1 = carteObj[0];
+          carteObj2 = carteObj[1];
+        }
+        else {
+          carteObj1 = ($("img.carte."+ carteBot1)[Math.floor(Math.random()*2)]);
+          carteObj2 = ($("img.carte."+ carteBot2)[Math.floor(Math.random()*2)]);
+        }
+      }
+    }
+    // DIFFICULTE DIFFICILE
+    else if ($("#mode").val() == 5) {
+      var alea = Math.random();
+      var trouve = 0;
+
+      if (alea < 0.8) {
+        //recherche de couples dans les cartes deja vues
+        for (var i = 0 ; i < $(".vue").length ; i++) {
+          for (var j = 0 ; j < $(".vue").length ; j++) {
+            if ($(".vue")[i].classList[1] == $(".vue")[j].classList[1] && i != j)
+            {
+              console.log("paire trouvée");
+              carteBot1 = $(".vue")[i].classList[1];
+              carteObj1 = $(".vue")[i];
+              carteBot2 = $(".vue")[j].classList[1];
+              carteObj2 = $(".vue")[j];
+              trouve = 1;
+            }
+          }
+        }
+        //aucun couple trouvé
+        if (trouve == 0) {
+          //choix d'une première carte aléatoire
+          console.log("1er aleatoire");
+          carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+          while ($("."+carteBot1).hasClass("found")) {
+            carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+          }
+          carteObj1 = ($("img.carte."+ carteBot1)[Math.floor(Math.random()*2)]);
+          //recherche du couple dans les cartes deja vues
+          for (var i = 0 ; i < $(".vue").length ; i++) {
+            if ($(".vue")[i].classList[1] == carteObj1.classList[1])
+            {
+              carteObj2 = $(".vue")[i];
+            }
+            //si aucun couple n'a été trouvé, choix d'une deuxième carte aléatoire
+            else {
+              console.log("2eme aleatoire");
+              carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+              while ($("."+carteBot2).hasClass("found")) {
+                carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+              }
+              if (carteBot1 == carteBot2) {
+                var carteObj = $("img.carte."+ carteBot1);
+                carteObj1 = carteObj[0];
+                carteObj2 = carteObj[1];
+              }
+              else {
+                carteObj2 = ($("img.carte."+ carteBot2)[Math.floor(Math.random()*2)]);
+              }
+            }
+          }
+        }
+      }
+      else if (alea < 0.95) {
+        carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+        carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+
+        while ($("."+carteBot1).hasClass("found")) {
+          carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+        }
+        while ($("."+carteBot2).hasClass("found")) {
+          carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+        }
+
+        //selection des objets cartes à retourner
+        if (carteBot1 == carteBot2) {
+          var carteObj = $("img.carte."+ carteBot1);
+          carteObj1 = carteObj[0];
+          carteObj2 = carteObj[1];
+        }
+        else {
+          carteObj1 = ($("img.carte."+ carteBot1)[Math.floor(Math.random()*2)]);
+          carteObj2 = ($("img.carte."+ carteBot2)[Math.floor(Math.random()*2)]);
+        }
+      }
+      else {
+        console.log("triche");
+        //choix d'une première carte
+        carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+        while ($("."+carteBot1).hasClass("found")) {
+          carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+        }
+        //triche
+        carteBot2 = carteBot1;
+
+        //selection des objets cartes à retourner
+        if (carteBot1 == carteBot2) {
+          var carteObj = $("img.carte."+ carteBot1);
+          carteObj1 = carteObj[0];
+          carteObj2 = carteObj[1];
+        }
+        else {
+          carteObj1 = ($("img.carte."+ carteBot1)[Math.floor(Math.random()*2)]);
+          carteObj2 = ($("img.carte."+ carteBot2)[Math.floor(Math.random()*2)]);
+        }
+      }
+    }
+
+
+    //animation de retournement de la première carte
+    carteObj1.style.transform = "rotateY(90deg)";
+    carteObj1.style.transition = "0.3s";
+    setTimeout(function(){
+      carteObj1.setAttribute("src", adresseMedia($("#theme").val(), carteBot1, 1));
+      carteObj1.style.transform = "rotateY(180deg)";
+    }, 400);
+
+    setTimeout(function() {
+      //animation de retournement de la deuxième carte
+      carteObj2.style.transition = "0.3s";
+      carteObj2.style.transform = "rotateY(90deg)";
+      setTimeout(function(){
+        carteObj2.setAttribute("src", adresseMedia($("#theme").val(), carteBot2, 1));
+        carteObj2.style.transform = "rotateY(180deg)";
+      }, 400);
+
+      //animation de re-retournement des deux cartes
+      if (carteBot1 != carteBot2) {
+          setTimeout(function(){
+            carteObj2.style.transition = "0.1s";
+            carteObj2.style.transform = "rotateY(90deg)";
+            carteObj1.style.transform = "rotateY(90deg)";
+            setTimeout(function(){
+              carteObj2.setAttribute("src", adresseMedia($("#theme").val(), 0, 1));
+              carteObj1.setAttribute("src", adresseMedia($("#theme").val(), 0, 1));
+              carteObj2.style.transform = "rotateY(180deg)";
+              carteObj1.style.transform = "rotateY(180deg)";;
+            }, 200);
+          }, 1400);
+      }
+      else {
+        carteObj1.classList.add("found");
+        carteObj2.classList.add("found");
+        $(carteObj1).removeClass("vue");
+        $(carteObj2).removeClass("vue");
+
+        //ajout des points
+
+        //vérification de la victoire
+        if ($("img.carte.found").length == $("#nbColonnes").val() * $("#nbLignes").val()) {
+          setTimeout(function(){
+            victoire();
+          }, 500);
+        }
+      }
+    }, 1200);
+
+    if (!($(carteObj1).hasClass("vue"))) {
+      $(carteObj1).addClass("vue");
+    }
+    if (!($(carteObj2).hasClass("vue"))) {
+      $(carteObj2).addClass("vue");
+    }
+
+    if (carteBot1 == carteBot2) {
+      setTimeout(function() {
+        bot();
+      }, 3500);
+    }
+
+    var timeoutClick = setTimeout(function(){
+      $("img.carte").not($(".found")).click(retourneCarte);
+      $("div.divCarte").not($(".found")).addClass("hover");
+    }, 5000); //attente des animations du bot
 }
