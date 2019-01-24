@@ -85,7 +85,7 @@ function creerPlateau() {
 
   $("#bJouer").css("display", "unset");
   $("#bAbandonner").css("display", "none");
-  $("#bAbandonner").css("top", $("#plateau").offset().top + $("#plateau").outerHeight() + 30 + "px");
+  $("#bAbandonner").css("top", $("#plateau").offset().top + $("#plateau").outerHeight() + 80 + "px");
   $("#bAbandonner").css("left", $("#plateau").position().left + $("#plateau").outerWidth()/2 - 53 + "px");
 }
 
@@ -206,8 +206,9 @@ function jouer() {
     $("#voile").css("opacity", "0");
     $("#voile").css("z-index", "-1");
     $("#score").css("z-index", "1");
-  }, 250);
+  }, 350);
   $("#score").css("opacity", "1");
+  $("#plateau").css("display", "flex");
   $("#plateau").css("z-index", "2");
 
   $("#nbLignes").unbind("change");
@@ -227,12 +228,13 @@ function jouer() {
   attribCouple(imgPerTheme);
   $("img.carte").click(retourneCarte);
   $(".divCarte").addClass("hover");
-  $("#tours").text("0  tentative");
+  $("#tours").text("0 tour");
   nbTours = 0;
 
   divCarte = $(".divCarte");
 
   //définition de la position du chrono et du nombre de tours
+
 
   $("#chrono").css("left", ($(document).width() - $("#plateau").outerWidth() - 2 * $("#chrono").outerWidth())/4);
   $("#chrono").css("top", $("#plateau").position().top + $("#plateau").outerHeight()/2);
@@ -243,6 +245,8 @@ function jouer() {
   $("#chrono").css({"transform" : "translate(0,0)"});
   $("#tours").css({"transform" : "translate(0,0)"});
 
+  $("h2").css("display", "none");
+  $("h2").css("transform", "scale(0)");
   $("#bRetour").css("display", "none");
   $("#bRejouer").css("display", "none");
 
@@ -281,10 +285,10 @@ function retourneCarte() {
     retourne = 0;
     nbTours = parseInt($("#tours").text())+1;
     if (nbTours > 1) {
-      $("#tours").text(nbTours + "  tentatives");
+      $("#tours").text(nbTours + "  tours");
     }
     else {
-      $("#tours").text(nbTours + "  tentative");
+      $("#tours").text(nbTours + "  tour");
     }
 
     // réautorise les cartes qui n'ont pas été retournées, à être retournées
@@ -312,10 +316,10 @@ function retourneCarte() {
     }, 1400);
     nbTours = parseInt($("#tours").text())+1;
     if (nbTours > 1) {
-      $("#tours").text(nbTours + "  tentatives");
+      $("#tours").text(nbTours + "  tours");
     }
     else {
-      $("#tours").text(nbTours + "  tentative");
+      $("#tours").text(nbTours + "  tour");
     }
 
     retourne = 0;
@@ -453,18 +457,21 @@ function victoire() {
   $("#voile").css("height", $("#plateau").outerHeight() + "px");
   $("#voile").css("top", $("#plateau").position().top + 20 + "px");
   $("#voile").css("left", $("#plateau").position().left + "px");
+
+  $("#voile").css({"background-color" : "rgba(255,255,255,1"});
   setTimeout(function(){
-    $("#voile").css({"background-color" : "rgba(255,255,255,1"});
-  }, 800);
+    $("#plateau").css({"display" : "none"});
+    $("#voile").css({"background-color" : "rgba(255,255,255,0.7"});
+  }, 450);
 
     //positionnement des boutons
-    $("#bRetour").css("top", $("#voile").position().top + $("#voile").outerHeight() - 40 + "px");
+    $("#bRetour").css("top", $("#voile").position().top + $("#voile").outerHeight() - 50 + "px");
     $("#bRetour").css("left", $("#voile").position().left + $("#voile").outerWidth()/2 - $("#bRetour").width()/2 + "px");
     setTimeout(function(){
         $("#bRetour").css("display", "unset");
     }, 1200);
 
-    $("#bRejouer").css("top", $("#voile").position().top + $("#voile").outerHeight() - 70 + "px");
+    $("#bRejouer").css("top", $("#voile").position().top + $("#voile").outerHeight() - 90 + "px");
     $("#bRejouer").css("left", $("#voile").position().left + $("#voile").outerWidth()/2 - $("#bRetour").width()/2 + "px");
     setTimeout(function(){
         $("#bRejouer").css("display", "unset");
@@ -475,13 +482,16 @@ function victoire() {
       $("#bAbandonner").css("display", "none");
     }, 1000);
 
-    //déplacement
-    tX = $(document).width()/2 - $("#plateau").outerWidth()/2 + 1.35*$("#chrono").width()/2 - $("#chrono").offset().left;
-    console.log("document width / 2 : " + $(document).width()/2);
-    console.log("chrono width / 2 : - " + $("#chrono").width()/2);
-    console.log("chrono position left : - " + $("#chrono").position().left);
-    console.log("transition : " + ($(document).width()/2 - $("#plateau").outerWidth()/2  - $("#chrono").position().left));
+    //déplacement du chrono et du nombre de nbTours
+    $("h2").css("display", "unset");
+    setTimeout(function() {
+      $("h2").css("transform", "scale(3)");
+      setTimeout(function() {
+        $("h2").css("transform", "scale(1)");
+      }, 1000);
+    }, 800);
+    $("h2").css("top", ($("#plateau").position().top) + 10 + "px");
 
-    $("#chrono").css({"transform" : "translate( " + tX + "px , -10px)"});
-    $("#tours").css({"transform" : "translate( -" + tX + "px , 40px)"});
+    $("#chrono").css({"transform" : "translate(" + ($(document).width()/2 - $("#chrono").position().left - ($("#chrono").outerWidth()/2)) + "px , -20px)"});
+    $("#tours").css({"transform" : "translate(" + ($(document).width()/2 - $("#tours").position().left - ($("#tours").outerWidth()/2)) + "px , 25px)"});
 }

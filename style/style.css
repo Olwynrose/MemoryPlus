@@ -9,7 +9,7 @@ header {
 
 nav {
   background-color: black;
-  height: 65px;
+  height: 85px;
   width: 100%;
   margin: 0;
   display: flex;
@@ -21,13 +21,13 @@ nav {
 nav div {
   width: 150px;
   margin: 0;
-  height: 65px;
+  height: 85px;
 }
 nav div a {
   color: white;
   text-decoration: none;
   font-family: 'Lobster', cursive;
-  font-size: 20px;
+  font-size: 25px;
 }
 
 nav div {
@@ -42,6 +42,7 @@ nav div:hover {
 }
 nav div:hover > a {
   color: black;
+  text-shadow: 0 0 3px black;
   transition: 0.8s;
 }
 
@@ -69,18 +70,29 @@ nav img:hover {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  font-family: 'Indie Flower', cursive;
 }
 
 #options > div > select {
-  margin-bottom: 20px;
+  margin: 8px;
   padding: 0 15px;
   width: 200px;
-  height: 30px;
+  height: 35px;
   border-style: none;
   background-color: black;
   color: white;
   font-family: 'Abel', sans-serif;
+  font-size: 16px;
+}
+
+#options > p {
+  margin: 5px;
+  height: 18px;
+  width: 200px;
+  color: black;
+  font-size: 18px;
+  font-weight: bold;
+  font-family: 'Dawning of a New Day', cursive;
+  display: none;
 }
 
 option {
@@ -109,6 +121,7 @@ select::-ms-expand {
   font-weight: bold;
   transform: scale(1.02);
   transition: 0.3s;
+  text-shadow: 0 0 3px white;
 }
 
 #milieu {
@@ -167,6 +180,7 @@ select::-ms-expand {
   font-size: 20px;
   font-family: "Impact";
   box-shadow: 0 0px 10px gray;
+  transform-origin: center;
   transform : translate(0, 0);
   transition: transform 1s;
 }
@@ -193,8 +207,9 @@ select::-ms-expand {
   z-index: 1;
   border-radius: 10px;
   box-shadow: 0 0px 7px darkgray;
-  min-width: 260px;
+  min-width: 340px;
   min-height: 311px;
+  transition: 0.25s;
 }
 
 
@@ -227,7 +242,7 @@ img.carte {
   background-color: rgba(255,255,255,0.7);
   border-radius: 10px;
   z-index: 2;
-  transition: all 0.25s ease-in;
+  transition: all 0.4s ease-in;
 }
 
 #bRejouer, #bRetour {
@@ -235,15 +250,26 @@ img.carte {
   position: absolute;
   padding: 0;
   margin: 0;
-  width: 60px;
-  height: 20px;
+  width: 100px;
+  height: 30px;
   z-index: 4;
+  background-color: white;
+  border-radius: 15px 0 15px 0;
+}
+
+#bRejouer:hover, #bRetour:hover {
+  outline: none;
+  background-color: black;
+  color: white;
+  border-radius: 0 15px 0 15px;
+  transition: border-radius 0.5s, text-shadow 0.5s;
+  text-shadow: 0 0 3px white;
 }
 
 #bJouer {
   opacity: 1;
   padding: 0;
-  margin-top: 50px;
+  margin-top: 30px;
   width: 150px;
   height: 60px;
   transition: 1s;
@@ -257,7 +283,8 @@ img.carte {
   background-color: black;
   color: white;
   border-radius: 30px 0 30px 0;
-  transition: border-radius 0.5s;
+  text-shadow: 0 0 10px white;
+  transition: border-radius 0.5s, text-shadow 0.5s;
 }
 
 #bAbandonner {
@@ -266,7 +293,31 @@ img.carte {
   padding: 0;
   margin: 0;
   width: 100px;
-  height: 20px;
+  height: 30px;
   z-index: 4;
   transition: 1s;
+  background-color: white;
+  border-radius: 15px 0 15px 0;
+}
+
+#bAbandonner:hover {
+  outline: none;
+  background-color: black;
+  color: white;
+  border-radius: 0 15px 0 15px;
+  transition: border-radius 0.5s, text-shadow 0.5s;
+  text-shadow: 0 0 3px white;
+}
+
+h2 {
+  position: absolute;
+  display: none;
+  width: 100%;
+  font-size: 40px;
+  text-align: center;
+  transform: scale(0);
+  transition: transform 1s;
+  z-index: 4;
+  font-weight: 900;
+  font-family: 'Luckiest Guy', cursive;
 }
