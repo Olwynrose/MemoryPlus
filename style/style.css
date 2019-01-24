@@ -255,6 +255,9 @@ img.carte {
   z-index: 4;
   background-color: white;
   border-radius: 15px 0 15px 0;
+  font-family: 'Abel', sans-serif;
+  font-style: 21px;
+  font-weight: bolder;
 }
 
 #bRejouer:hover, #bRetour:hover {
@@ -298,6 +301,9 @@ img.carte {
   transition: 1s;
   background-color: white;
   border-radius: 15px 0 15px 0;
+  font-family: 'Abel', sans-serif;
+  font-style: 21px;
+  font-weight: bolder;
 }
 
 #bAbandonner:hover {
@@ -320,4 +326,11 @@ h2 {
   z-index: 4;
   font-weight: 900;
   font-family: 'Luckiest Guy', cursive;
+}
+
+p#annonceScores, p#annoncePc {
+  position: absolute;
+  display: none;
+  z-index: 4;
+  font-family: 'Abel', sans-serif;
 }

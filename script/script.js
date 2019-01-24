@@ -247,6 +247,8 @@ function jouer() {
 
   $("h2").css("display", "none");
   $("h2").css("transform", "scale(0)");
+  $("#annonceScores").css("display", "none");
+  $("#annoncePc").css("display", "none");
   $("#bRetour").css("display", "none");
   $("#bRejouer").css("display", "none");
 
@@ -331,7 +333,7 @@ function retourneCarte() {
           divCarte[i].className += " hover";
         }
       }
-    }, 1600);
+    }, 1700);
 
   }
   else if (retourne == 0) {
@@ -483,6 +485,10 @@ function victoire() {
     }, 1000);
 
     //déplacement du chrono et du nombre de nbTours
+    $("#chrono").css({"transform" : "translate(" + ($(document).width()/2 - $("#chrono").position().left - ($("#chrono").outerWidth()/2)) + "px , -20px)"});
+    $("#tours").css({"transform" : "translate(" + ($(document).width()/2 - $("#tours").position().left - ($("#tours").outerWidth()/2)) + "px , 25px)"});
+
+    $("h2").text("FÉLICITATIONS !");
     $("h2").css("display", "unset");
     setTimeout(function() {
       $("h2").css("transform", "scale(3)");
@@ -492,6 +498,17 @@ function victoire() {
     }, 800);
     $("h2").css("top", ($("#plateau").position().top) + 10 + "px");
 
-    $("#chrono").css({"transform" : "translate(" + ($(document).width()/2 - $("#chrono").position().left - ($("#chrono").outerWidth()/2)) + "px , -20px)"});
-    $("#tours").css({"transform" : "translate(" + ($(document).width()/2 - $("#tours").position().left - ($("#tours").outerWidth()/2)) + "px , 25px)"});
+    $("#annonceScores").text("Vous avez terminé la partie en :");
+    setTimeout(function() {
+      $("#annonceScores").css("display", "unset");
+    }, 650);
+    $("#annonceScores").css("top", ($("#chrono").position().top) - 65 + "px");
+
+    $("#annoncePc").text("Soit " + Math.round(($("#nbLignes").val() * $("#nbColonnes").val()/2)/nbTours*100) + "% de réussite");
+    setTimeout(function() {
+      $("#annoncePc").css("display", "unset");
+    }, 650);
+    $("#annoncePc").css("top", ($("#tours").position().top) + 50 + "px");
+
+
 }
