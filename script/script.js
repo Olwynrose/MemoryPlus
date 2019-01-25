@@ -520,11 +520,14 @@ function victoire() {
     }, 650);
     $("#annonceScores").css("top", ($("#chrono").position().top) - 65 + "px");
 
-    $("#annoncePc").text("Soit " + Math.round(($("#nbLignes").val() * $("#nbColonnes").val()/2)/nbTours*100) + "% de réussite");
-    setTimeout(function() {
-      $("#annoncePc").css("display", "unset");
-    }, 650);
-    $("#annoncePc").css("top", ($("#tours").position().top) + 50 + "px");
+    if ($("#mode").val() == 1) {
+      $("#annoncePc").text("Soit " + Math.round(($("#nbLignes").val() * $("#nbColonnes").val()/2)/nbTours*100) + "% de réussite");
+      setTimeout(function() {
+        $("#annoncePc").css("display", "unset");
+      }, 650);
+      $("#annoncePc").css("top", ($("#tours").position().top) + 50 + "px");
+    }
+
 }
 
 
@@ -539,7 +542,6 @@ function bot() {
     $("img.carte").unbind("click");
     $("div.divCarte").removeClass("hover");
 
-    clearTimeout(timeoutClick);
 
 
     //détermination des cartes à retourner en fonction du niveau de difficulté
@@ -669,6 +671,7 @@ function bot() {
           //choix d'une première carte aléatoire
           console.log("1er aleatoire");
           carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
+          console.log(carteBot1);
           while ($("."+carteBot1).hasClass("found")) {
             carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
           }
@@ -678,6 +681,7 @@ function bot() {
             if ($(".vue")[i].classList[1] == carteObj1.classList[1])
             {
               carteObj2 = $(".vue")[i];
+              carteBot2 = carteObj2.classList[1];
             }
             //si aucun couple n'a été trouvé, choix d'une deuxième carte aléatoire
             else {
@@ -699,6 +703,7 @@ function bot() {
         }
       }
       else if (alea < 0.95) {
+        console.log("aleatoire");
         carteBot1 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
         carteBot2 = usedCouples[Math.floor(Math.random()*usedCouples.length)];
 
@@ -743,6 +748,12 @@ function bot() {
       }
     }
 
+    if (carteObj1 == null) {
+      carteObj1 = ($("img.carte."+ carteBot1)[Math.floor(Math.random()*2)]);
+    }
+    if (carteObj2 == null) {
+      carteObj2 = ($("img.carte."+ carteBot2)[Math.floor(Math.random()*2)]);
+    }
 
     //animation de retournement de la première carte
     carteObj1.style.transform = "rotateY(90deg)";
@@ -754,6 +765,7 @@ function bot() {
 
     setTimeout(function() {
       //animation de retournement de la deuxième carte
+      console.log(carteObj2);
       carteObj2.style.transition = "0.3s";
       carteObj2.style.transform = "rotateY(90deg)";
       setTimeout(function(){
@@ -785,12 +797,18 @@ function bot() {
 
         //vérification de la victoire
         if ($("img.carte.found").length == $("#nbColonnes").val() * $("#nbLignes").val()) {
+          console.log("victoire (bot)");
           setTimeout(function(){
             victoire();
-          }, 500);
+          }, 1500);
+        }
+        else {
+          setTimeout(function() {
+            bot();
+          }, 3500); //relance du bot, attente des animations
         }
       }
-    }, 1200);
+    }, 1200);//attente de la première partie de l'animation
 
     if (!($(carteObj1).hasClass("vue"))) {
       $(carteObj1).addClass("vue");
@@ -799,14 +817,8 @@ function bot() {
       $(carteObj2).addClass("vue");
     }
 
-    if (carteBot1 == carteBot2) {
-      setTimeout(function() {
-        bot();
-      }, 3500);
-    }
-
     var timeoutClick = setTimeout(function(){
       $("img.carte").not($(".found")).click(retourneCarte);
       $("div.divCarte").not($(".found")).addClass("hover");
-    }, 5000); //attente des animations du bot
+    }, 3200); //attente des animations du bot
 }
